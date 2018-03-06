@@ -16,7 +16,7 @@
 
 [[ -o login ]] || return  # Login shell
 
-export KRATOS_IS_LOGIN_SHELL=true
+export ELVISH_IS_LOGIN_SHELL=true
 
 if type elvish > /dev/null; then
   exec elvish
