@@ -45,15 +45,13 @@ fn init {
     'zshrc'
   ]
 
-  if (not (has-env HOME)) {
-    fail 'HOME is not set'
-  }
+  local:home = (get-env HOME)
 
   for local:i $rc-files {
     # FIXME: hardcoded path, need a way to get elvish lib dir
     install-rc \
-      $E:HOME'/.elvish/lib/github.com/chlorm/elvish-as-default-shell/rc/'$i \
-      $E:HOME'/.'$i
+      $home'/.elvish/lib/github.com/chlorm/elvish-as-default-shell/rc/'$i \
+      $home'/.'$i
   }
 }
 
