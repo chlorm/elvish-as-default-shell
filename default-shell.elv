@@ -20,7 +20,7 @@ fn install-rc [source target]{
   }
 
   if ?(test -L $target) {
-    if (==s (readlink -f $target) $source) {
+    if ?(==s (readlink -f $target) $source) {
       return
     } else {
       unlink $target
