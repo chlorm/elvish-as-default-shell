@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Rename existing files to file.old or something
-
 fn install-rc [source target]{
   if (and ?(test -f $target'.original') ?(test -f $target)) {
     return
