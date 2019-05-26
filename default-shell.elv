@@ -38,7 +38,6 @@ fn init {
     'bashrc'
     'kshrc'
     'profile'
-    'zlogout'
     'zprofile'
     'zshrc'
   ]
