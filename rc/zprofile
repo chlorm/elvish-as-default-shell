@@ -18,7 +18,5 @@
 
 export ELVISH_IS_LOGIN_SHELL=true
 
-if type elvish > /dev/null; then
-  exec elvish
-  exit $?
-fi
+source "$HOME"/.zshrc
+
