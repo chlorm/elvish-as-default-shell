@@ -12,24 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+use github.com/chlorm/elvish-stl/os
+
+
 fn install-rc [source target]{
-  if (and ?(test -f $target'.original') ?(test -f $target)) {
+  if (and (os:is-file $target'.original') (os:is-file $target)) {
     return
   }
 
-  if ?(test -L $target) {
-    if (==s (readlink -f $target) $source) {
+  if (os:is-symlink $target) {
+    if (==s (os:readlink $target) $source) {
       return
     } else {
-      unlink $target
+      os:unlink $target
     }
-  } elif (and (not ?(test -f $target'.original')) ?(test -f $target)) {
-    mv $target $target'.original'
-  } elif ?(test -f $target) {
-    rm $target
+  } elif (and (not (os:is-file $target'.original')) (os:is-file $target)) {
+    os:move $target $target'.original'
+  } elif (os:is-file $target) {
+    os:remove $target
   }
 
-  ln -s $source $target
+  os:symlink $source $target
 }
 
 fn init {
