@@ -17,10 +17,6 @@ use github.com/chlorm/elvish-stl/os
 
 
 fn install-rc [source target]{
-  if (and (os:is-file $target'.original') (os:is-file $target)) {
-    return
-  }
-
   if (os:is-symlink $target) {
     if (==s (os:readlink $target) $source) {
       return
