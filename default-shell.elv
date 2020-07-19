@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+use epm
 use github.com/chlorm/elvish-stl/os
 
 
@@ -45,9 +46,8 @@ fn init {
   local:home = (get-env HOME)
 
   for local:i $rc-files {
-    # FIXME: hardcoded path, need a way to get elvish lib dir
     install-rc \
-      $home'/.elvish/lib/github.com/chlorm/elvish-as-default-shell/rc/'$i \
+      (epm:metadata 'github.com/chlorm/elvish-as-default-shell')['dst']'/rc/'$i \
       $home'/.'$i
   }
 }
