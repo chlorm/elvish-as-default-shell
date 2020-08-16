@@ -46,8 +46,8 @@ fn init {
   local:home = (get-env HOME)
 
   for local:i $rc-files {
-    install-rc \
-      (epm:metadata 'github.com/chlorm/elvish-as-default-shell')['dst']'/rc/'$i \
+    install-rc ^
+      (epm:metadata 'github.com/chlorm/elvish-as-default-shell')['dst']'/rc/'$i ^
       $home'/.'$i
   }
 }
