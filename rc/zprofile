@@ -13,10 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-[[ -o login ]] || return  # Login shell
+# Login shell
+[[ -o login ]] || return
 
 export ELVISH_IS_LOGIN_SHELL=true
 
 source "$HOME"/.zshrc
-

@@ -13,9 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[[ $- == *i* ]] || return  # Interactive shell
+# Interactive shell
+[[ $- == *i* ]] || return
 
-if type elvish > /dev/null; then
-  exec elvish
-  exit $?
+if type elvish >/dev/null; then
+    exec elvish
+    exit $?
 fi

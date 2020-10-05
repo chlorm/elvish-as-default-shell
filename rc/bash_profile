@@ -13,9 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-shopt -q login_shell || return  # Login shell
+# Login shell
+shopt -q login_shell || return
 
 export ELVISH_IS_LOGIN_SHELL=true
 
+# shellcheck disable=SC1090
 source "$HOME"/.bashrc
-

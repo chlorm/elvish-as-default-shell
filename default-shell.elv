@@ -18,38 +18,37 @@ use github.com/chlorm/elvish-stl/os
 
 
 fn install-rc [source target]{
-  if (os:is-symlink $target) {
-    if (==s (os:readlink $target) $source) {
-      return
-    } else {
-      os:unlink $target
+    if (os:is-symlink $target) {
+        if (==s (os:readlink $target) $source) {
+            return
+        } else {
+            os:unlink $target
+        }
+    } elif (and (not (os:is-file $target'.original')) (os:is-file $target)) {
+        os:move $target $target'.original'
+    } elif (os:is-file $target) {
+        os:remove $target
     }
-  } elif (and (not (os:is-file $target'.original')) (os:is-file $target)) {
-    os:move $target $target'.original'
-  } elif (os:is-file $target) {
-    os:remove $target
-  }
 
-  os:symlink $source $target
+    os:symlink $source $target
 }
 
 fn init {
-  local:rc-files = [
-    'bash_profile'
-    'bashrc'
-    'kshrc'
-    'profile'
-    'zprofile'
-    'zshrc'
-  ]
+    local:rc-files = [
+        'bash_profile'
+        'bashrc'
+        'kshrc'
+        'profile'
+        'zprofile'
+        'zshrc'
+    ]
 
-  local:home = (get-env HOME)
-
-  for local:i $rc-files {
-    install-rc ^
-      (epm:metadata 'github.com/chlorm/elvish-as-default-shell')['dst']'/rc/'$i ^
-      $home'/.'$i
-  }
+    local:home = (get-env HOME)
+    local:url = 'github.com/chlorm/elvish-as-default-shell'
+    local:lib-dir = (epm:metadata $url)['dst']
+    for local:i $rc-files {
+        install-rc $lib-dir'/rc/'$i $home'/.'$i
+    }
 }
 
 init
