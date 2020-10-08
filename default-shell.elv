@@ -14,7 +14,9 @@
 
 
 use epm
+use platform
 use github.com/chlorm/elvish-stl/os
+use github.com/chlorm/elvish-stl/path
 
 
 fn install-rc [source target]{
@@ -34,6 +36,13 @@ fn install-rc [source target]{
 }
 
 fn init {
+    if $platform:is-windows {
+        local:elvish-exe = (path:absolute (search-external elvish))
+        local:reg-path = 'HKEY_CURRENT_USER\SOFTWARE\Microsoft\Command Processor'
+        local:capture = (REG ADD $reg-path /v AutoRun /t REG_SZ /d $elvish-exe /f)
+        return
+    }
+
     local:rc-files = [
         'bash_profile'
         'bashrc'
