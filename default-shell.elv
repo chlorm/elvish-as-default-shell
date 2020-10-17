@@ -32,15 +32,25 @@ fn install-rc [source target]{
         os:remove $target
     }
 
-    os:symlink $source $target
+    if $platform:is-windows {
+        os:copy $source $target
+    } else {
+        os:symlink $source $target
+    }
 }
 
 fn init {
+    url = 'github.com/chlorm/elvish-as-default-shell'
+    libDir = (epm:metadata $url)['dst']
+
     if $platform:is-windows {
+        rcFile = $libDir'/rc/Microsoft.PowerShell_profile.ps1'
+        installPath = (powershell.exe -NonInteractive -Command 'echo $profile')
+        install-rc $rcFile $installPath
         return
     }
 
-    local:rc-files = [
+    rcFiles = [
         'bash_profile'
         'bashrc'
         'kshrc'
@@ -49,11 +59,9 @@ fn init {
         'zshrc'
     ]
 
-    local:home = (get-env HOME)
-    local:url = 'github.com/chlorm/elvish-as-default-shell'
-    local:lib-dir = (epm:metadata $url)['dst']
-    for local:i $rc-files {
-        install-rc $lib-dir'/rc/'$i $home'/.'$i
+    home = (get-env HOME)
+    for i $rcFiles {
+        install-rc $libDir'/rc/'$i $home'/.'$i
     }
 }
 
