@@ -45,7 +45,7 @@ fn init {
 
     if $platform:is-windows {
         var rcFile = $libDir'/rc/Microsoft.PowerShell_profile.ps1'
-        var installPath = (powershell.exe -NonInteractive -Command 'echo $profile')
+        var installPath = (e:powershell.exe '-NonInteractive' '-Command' 'echo $profile')
         install-rc $rcFile $installPath
         return
     }
@@ -59,7 +59,7 @@ fn init {
         'zshrc'
     ]
 
-    var home = (get-env HOME)
+    var home = (get-env 'HOME')
     for i $rcFiles {
         install-rc $libDir'/rc/'$i $home'/.'$i
     }
