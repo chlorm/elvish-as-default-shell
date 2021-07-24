@@ -33,6 +33,10 @@ fn install-rc [source target]{
     }
 
     if $platform:is-windows {
+        var targetDir = (path:dirname $target)
+        if (not (os:is-dir $targetDir)) {
+            os:makedirs $targetDir
+        }
         os:copy $source $target
     } else {
         os:symlink $source $target
