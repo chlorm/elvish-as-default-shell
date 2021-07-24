@@ -49,7 +49,13 @@ fn init {
 
     if $platform:is-windows {
         var rcFile = $libDir'/rc/Microsoft.PowerShell_profile.ps1'
-        var installPath = (e:powershell.exe '-NonInteractive' '-Command' 'echo $profile')
+        var installPath = $nil
+        # Look for powershell-core v6+ first
+        try {
+            set installPath = (e:pwsh.exe '-NonInteractive' '-Command' 'echo $profile')
+        } except _ {
+            set installPath = (e:powershell.exe '-NonInteractive' '-Command' 'echo $profile')
+        }
         install-rc $rcFile $installPath
         return
     }
