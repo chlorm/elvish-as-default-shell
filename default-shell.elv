@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Cody Opel <cwopel@chlorm.net>
+# Copyright (c) 2018, 2020-2021, Cody Opel <cwopel@chlorm.net>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ use epm
 use platform
 use github.com/chlorm/elvish-stl/os
 use github.com/chlorm/elvish-stl/path
+use github.com/chlorm/elvish-stl/wrap
 
 
 fn install-rc [source target]{
@@ -48,13 +49,13 @@ fn init {
     var libDir = (epm:metadata $url)['dst']
 
     if $platform:is-windows {
-        var rcFile = $libDir'/rc/Microsoft.PowerShell_profile.ps1'
-        var psProfileArgs = [ '-NonInteractive' '-Command' 'echo $profile' ]
+        var rcFile = (path:join $libDir 'rc' 'Microsoft.PowerShell_profile.ps1')
+        var psProfileArgs = [ 'echo' '$profile' ]
         try {
             # Look for powershell-core
-            install-rc $rcFile (e:pwsh.exe $@psProfileArgs)
+            install-rc $rcFile (wrap:ps-out &cmd='pwsh' $@psProfileArgs)
         } except _ { }
-        install-rc $rcFile (e:powershell.exe $@psProfileArgs)
+        install-rc $rcFile (wrap:ps-out $@psProfileArgs)
         return
     }
 
@@ -67,9 +68,9 @@ fn init {
         'zshrc'
     ]
 
-    var home = (get-env 'HOME')
+    var home = (path:home)
     for i $rcFiles {
-        install-rc $libDir'/rc/'$i $home'/.'$i
+        install-rc (path:join $libDir 'rc' $i) (path:join $home '.'$i)
     }
 }
 
