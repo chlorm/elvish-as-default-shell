@@ -20,7 +20,7 @@ use github.com/chlorm/elvish-stl/path
 use github.com/chlorm/elvish-stl/wrap
 
 
-fn install-rc [source target]{
+fn install-rc {|source target|
     if (os:is-symlink $target) {
         if (==s (os:readlink $target) $source) {
             return
