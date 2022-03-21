@@ -54,7 +54,7 @@ fn init {
         try {
             # Look for powershell-core
             install-rc $rcFile (wrap:ps-out &cmd='pwsh' $@psProfileArgs)
-        } except _ { }
+        } catch _ { }
         install-rc $rcFile (wrap:ps-out $@psProfileArgs)
         return
     }
