@@ -14,10 +14,10 @@
 
 
 use epm
+use github.com/chlorm/elvish-stl/exec
 use github.com/chlorm/elvish-stl/os
 use github.com/chlorm/elvish-stl/path
 use github.com/chlorm/elvish-stl/platform
-use github.com/chlorm/elvish-stl/wrap
 
 
 fn install-rc {|source target|
@@ -53,9 +53,9 @@ fn init {
         var psProfileArgs = [ 'echo' '$profile' ]
         try {
             # Look for powershell-core
-            install-rc $rcFile (wrap:ps-out &cmd='pwsh' $@psProfileArgs)
+            install-rc $rcFile (exec:ps-out &cmd='pwsh' $@psProfileArgs)
         } catch _ { }
-        install-rc $rcFile (wrap:ps-out $@psProfileArgs)
+        install-rc $rcFile (exec:ps-out $@psProfileArgs)
         return
     }
 
