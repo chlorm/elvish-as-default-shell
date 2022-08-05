@@ -1,4 +1,4 @@
-# Copyright (c) 2020, Cody Opel <cwopel@chlorm.net>
+# Copyright (c) 2020, 2022, Cody Opel <cwopel@chlorm.net>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,11 @@ function Test-Interactive {
     }
 }
 
+function ExitClean {
+    $host.SetShouldExit(0)
+    exit 0
+}
+
 if ((Get-Command elvish.exe) -and (Test-Interactive)) {
-    # FIXME: Powershell does not have an equivalent to POSIX exec.
-    & elvish.exe
+    (& elvish.exe) -and (ExitClean)
 }
