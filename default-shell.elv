@@ -1,4 +1,4 @@
-# Copyright (c) 2018, 2020-2021, Cody Opel <cwopel@chlorm.net>
+# Copyright (c) 2018, 2020-2022, Cody Opel <cwopel@chlorm.net>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,45 +20,55 @@ use github.com/chlorm/elvish-stl/path
 use github.com/chlorm/elvish-stl/platform
 
 
-fn install-rc {|source target|
-    if (os:is-symlink $target) {
-        if (==s (os:readlink $target) $source) {
-            return
-        } else {
-            os:unlink $target
-        }
-    } elif (and (not (os:is-file $target'.original')) (os:is-file $target)) {
-        os:move $target $target'.original'
-    } elif (os:is-file $target) {
-        os:remove $target
+fn remove-old-rc {|target|
+    var orig = $target'.original'
+    if (and (not (os:is-file $orig)) (os:is-file $target)) {
+        os:move $target $orig
     }
-
-    if $platform:is-windows {
-        var targetDir = (path:dirname $target)
-        if (not (os:is-dir $targetDir)) {
-            os:makedirs $targetDir
-        }
-        os:copy $source $target
-    } else {
-        os:symlink $source $target
+    if (os:is-file $target) {
+        os:remove $target
     }
 }
 
-fn init {
-    var url = 'github.com/chlorm/elvish-as-default-shell'
-    var libDir = (epm:metadata $url)['dst']
-
-    if $platform:is-windows {
-        var rcFile = (path:join $libDir 'rc' 'Microsoft.PowerShell_profile.ps1')
-        var psProfileArgs = [ 'echo' '$profile' ]
-        try {
-            # Look for powershell-core
-            install-rc $rcFile (exec:ps-out &cmd='pwsh' $@psProfileArgs)
-        } catch _ { }
-        install-rc $rcFile (exec:ps-out $@psProfileArgs)
-        return
+fn update-symlink {|source target|
+    if (os:is-symlink $target) {
+        if (==s (os:readlink $target) $source) {
+            return
+        }
+        os:unlink $target
     }
+    os:symlink $source $target
+}
 
+fn create-parent-dirs {|target|
+    var targetDir = (path:dirname $target)
+    if (not (os:is-dir $targetDir)) {
+        os:makedirs $targetDir
+    }
+}
+
+fn install-rc {|source target|
+    remove-old-rc $target
+    update-symlink $source $target
+}
+
+fn install-rc-windows {|source target|
+    remove-old-rc $target
+    create-parent-dirs $target
+    os:copy $source $target
+}
+
+fn init-session-windows {|libDir|
+    var rcFile = (path:join $libDir 'rc' 'Microsoft.PowerShell_profile.ps1')
+    var psProfileArgs = [ 'echo' '$profile' ]
+    try {
+        # Look for powershell-core
+        install-rc-windows $rcFile (exec:ps-out &cmd='pwsh' $@psProfileArgs)
+    } catch _ { }
+    install-rc-windows $rcFile (exec:ps-out $@psProfileArgs)
+}
+
+fn init-session-unix {|libDir|
     var rcFiles = [
         'bash_profile'
         'bashrc'
@@ -70,8 +80,20 @@ fn init {
 
     var home = (path:home)
     for i $rcFiles {
-        install-rc (path:join $libDir 'rc' $i) (path:join $home '.'$i)
+        var s = (path:join $libDir 'rc' $i)
+        var t = (path:join $home '.'$i)
+        install-rc $s $t
     }
 }
 
-init
+fn init-session {
+    var url = 'github.com/chlorm/elvish-as-default-shell'
+    var libDir = (epm:metadata $url)['dst']
+
+    if $platform:is-windows {
+        init-session-windows $libDir
+        return
+    }
+
+    init-session-unix $libDir
+}

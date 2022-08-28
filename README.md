@@ -5,4 +5,5 @@
 ```elvish
 epm:install github.com/chlorm/elvish-as-default-shell
 use github.com/chlorm/elvish-as-default-shell/default-shell
+default-shell:init-session
 ```
