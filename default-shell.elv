@@ -14,7 +14,6 @@
 
 
 use epm
-use github.com/chlorm/elvish-stl/exec
 use github.com/chlorm/elvish-stl/os
 use github.com/chlorm/elvish-stl/path
 use github.com/chlorm/elvish-stl/platform
@@ -58,16 +57,6 @@ fn install-rc-windows {|source target|
     os:copy $source $target
 }
 
-fn init-session-windows {|libDir|
-    var rcFile = (path:join $libDir 'rc' 'Microsoft.PowerShell_profile.ps1')
-    var psProfileArgs = [ 'echo' '$profile' ]
-    try {
-        # Look for powershell-core
-        install-rc-windows $rcFile (exec:ps-out &cmd='pwsh' $@psProfileArgs)
-    } catch _ { }
-    install-rc-windows $rcFile (exec:ps-out $@psProfileArgs)
-}
-
 fn init-session-unix {|libDir|
     var rcFiles = [
         'bash_profile'
@@ -91,7 +80,6 @@ fn init-session {
     var libDir = (epm:metadata $url)['dst']
 
     if $platform:is-windows {
-        init-session-windows $libDir
         return
     }
 
